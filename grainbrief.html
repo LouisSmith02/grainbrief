@@ -228,6 +228,7 @@ function renderPrices(data){
   }
 
   /* YTD charts */
+  const ytdSet=new Set(['ZCN26.CBT','ZWN26.CBT','EBM=F']);
   const ytdContracts=contracts.filter(c=>ytdSet.has(c.sym)&&prices[c.sym]?.ytd_closes?.length>5);
   if(ytdContracts.length){
     html+=`<div class="ytd-wrap"><div class="ytd-lbl">YTD Price Charts</div><div class="ytd-grid">`;
