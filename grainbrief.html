@@ -200,18 +200,24 @@ function buildYTDChart(cid,dates,closes,color){
 function renderPrices(data){
   const prices=data.prices||{};
   const contracts=data.contracts||[];
-  const cbot=contracts.filter(c=>!c.label.includes('MATIF'));
-  const matif=contracts.filter(c=>c.label.includes('MATIF'));
-  const ytdSet=new Set(['ZC=F','ZW=F','KE=F','EBM=F','ECO=F']);
+
+  /* Group by the 'group' field set in fetch_data.py */
+  const groups={};
+  for(const c of contracts){
+    const g=c.group||'Other';
+    if(!groups[g])groups[g]=[];
+    groups[g].push(c);
+  }
 
   let html='';
-  const renderGroup=(name,items)=>{
-    html+=`<div class="grp-lbl">${name}</div>`;
+  for(const [gname,items] of Object.entries(groups)){
+    html+=`<div class="grp-lbl">${gname}</div>`;
     for(const c of items){
       const p=prices[c.sym];
       const price=p?.price,chg=p?.change,pct=p?.pct;
       const cv=chg!=null?cc(chg):'fl';
-      const spark=p?.ytd_closes?.length>3?sparkSVG(p.ytd_closes,c.col):'';
+      const isFirst=items.indexOf(c)===0;
+      const spark=isFirst&&p?.ytd_closes?.length>3?sparkSVG(p.ytd_closes,c.col):'';
       html+=`<div class="prow ${c.cls}">
         <div><span class="pname">${c.label}</span><span class="punit">${c.unit}</span>${spark}</div>
         <div class="pval ${cv}">${price!=null?f(price):'—'}</div>
@@ -219,9 +225,7 @@ function renderPrices(data){
         <div class="phl">H:${p?.hi!=null?f(p.hi):'—'}<br>L:${p?.lo!=null?f(p.lo):'—'}</div>
       </div>`;
     }
-  };
-  renderGroup('CBOT — Chicago',cbot);
-  renderGroup('Euronext / MATIF — Paris',matif);
+  }
 
   /* YTD charts */
   const ytdContracts=contracts.filter(c=>ytdSet.has(c.sym)&&prices[c.sym]?.ytd_closes?.length>5);
