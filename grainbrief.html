@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GrainBrief — Morning Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-adapter-date-fns/3.0.0/chartjs-adapter-date-fns.bundle.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#090d13;--s1:#0f1720;--bdr:#1a2d3f;--muted:#1f3045;
+  --dim:#3a5870;--txt:#b8d0e4;--up:#38d48a;--dn:#ef5757;
+  --warn:#e5b84a;--acc:#4d9bdc;--corn:#d3c149;--wheat:#c79f44;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:13px}
+#app{display:grid;grid-template-rows:52px 1fr 28px;width:100vw;height:100vh;padding:10px 14px 7px;gap:7px}
+
+/* HEADER */
+#hdr{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bdr);padding-bottom:9px}
+.logo{font-family:var(--mono);font-size:17px;font-weight:600;color:var(--acc);letter-spacing:.09em}
+.tagline{font-size:10px;color:var(--dim);letter-spacing:.07em;text-transform:uppercase;margin-top:2px}
+#clock{font-family:var(--mono);font-size:22px;font-weight:600;text-align:right}
+#clockdate{font-size:10px;color:var(--dim);text-align:right;margin-top:2px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--up);animation:pulse 2.5s ease-in-out infinite;flex-shrink:0}
+.dot.stale{background:var(--warn)}.dot.error{background:var(--dn);animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.rbtn{font-family:var(--mono);font-size:9px;background:var(--muted);border:1px solid var(--bdr);color:var(--dim);padding:4px 10px;cursor:pointer;border-radius:2px;letter-spacing:.06em;transition:color .15s,border-color .15s}
+.rbtn:hover{color:var(--txt);border-color:var(--acc)}
+
+/* MAIN GRID */
+#grid{display:grid;grid-template-columns:1.75fr 1.55fr 1.4fr;grid-template-rows:1fr 1fr;gap:7px;min-height:0}
+.panel{background:var(--s1);border:1px solid var(--bdr);border-radius:3px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.tall{grid-row:1/3}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:6px 11px 5px;border-bottom:1px solid var(--bdr);background:rgba(255,255,255,.016);flex-shrink:0}
+.ph-title{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.ph-title b{color:var(--acc);font-weight:400;margin-right:5px}
+.ph-meta{font-family:var(--mono);font-size:9px;color:var(--muted)}
+.pb{flex:1;padding:7px 11px;overflow:hidden;min-height:0}
+
+/* PRICES */
+.grp-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin:5px 0 3px;border-bottom:1px solid var(--bdr);padding-bottom:2px}
+.prow{display:grid;grid-template-columns:1fr 90px 62px 58px;align-items:center;gap:4px;padding:4px 6px;margin-bottom:2px;background:rgba(255,255,255,.011);border-left:2px solid transparent}
+.prow.corn{border-left-color:var(--corn)}.prow.wheat{border-left-color:var(--wheat)}
+.pname{font-size:11px;font-weight:500;line-height:1.2}.punit{font-size:8px;color:var(--dim);display:block}
+.pval{font-family:var(--mono);font-size:16px;font-weight:600;text-align:right}
+.pchg{font-family:var(--mono);font-size:10px;text-align:right;line-height:1.35}
+.phl{font-family:var(--mono);font-size:8px;color:var(--dim);text-align:right;line-height:1.5}
+.up{color:var(--up)}.dn{color:var(--dn)}.fl{color:var(--warn)}
+.spk{display:block;margin-top:2px}
+.ytd-wrap{border-top:1px solid var(--bdr);margin-top:7px;padding-top:6px}
+.ytd-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.ytd-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.ytd-item-lbl{font-family:var(--mono);font-size:8px;color:var(--dim);margin-bottom:2px}
+.ytd-ch{position:relative;height:60px}
+
+/* WEATHER */
+.wx-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;height:100%}
+.wx-card{background:rgba(255,255,255,.014);border:1px solid var(--bdr);border-radius:2px;padding:6px 8px;display:flex;flex-direction:column;gap:3px;overflow:hidden}
+.wx-region{font-family:var(--mono);font-size:8px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim)}
+.wx-now{display:flex;align-items:baseline;gap:7px}
+.wx-temp{font-family:var(--mono);font-size:18px;font-weight:600;line-height:1}
+.wx-desc{font-size:10px;color:var(--dim)}
+.fc-strip{display:flex;gap:2px;flex:1}
+.fc-day{flex:1;min-width:0;text-align:center;background:rgba(255,255,255,.018);border:1px solid var(--bdr);padding:2px 1px;border-radius:1px}
+.fc-dn{font-family:var(--mono);font-size:7px;color:var(--dim)}
+.fc-hi{font-family:var(--mono);font-size:10px;font-weight:600}
+.fc-lo{font-family:var(--mono);font-size:8px}
+.fc-pr{font-family:var(--mono);font-size:7px;color:var(--acc)}
+
+/* INTEL */
+.intel-item{padding:5px 0;border-bottom:1px solid var(--bdr)}
+.intel-item:last-child{border-bottom:none}
+.intel-src{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1px}
+.intel-title{font-size:11px;line-height:1.3;color:var(--txt)}
+.intel-time{font-family:var(--mono);font-size:8px;color:var(--dim);margin-top:1px}
+
+/* CALENDAR */
+.cal-section{margin-bottom:5px}
+.cal-hdr{font-family:var(--mono);font-size:8px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);padding-bottom:2px;border-bottom:1px solid var(--bdr);margin-bottom:3px}
+.cal-row{display:flex;align-items:center;justify-content:space-between;padding:3px 5px;margin-bottom:2px;gap:5px;border-left:2px solid transparent}
+.cal-row.this-week{background:rgba(229,184,74,.07);border-left-color:var(--warn)}
+.cal-row.today{background:rgba(56,212,138,.08);border-left-color:var(--up)}
+.cal-name{font-size:10px;flex:1}
+.cal-freq{font-size:9px;color:var(--dim)}
+.cal-date{font-family:var(--mono);font-size:9px;color:var(--dim);white-space:nowrap;margin-left:4px}
+.cbadge{display:inline-block;font-family:var(--mono);font-size:7px;padding:0 3px;text-transform:uppercase;letter-spacing:.06em;border-radius:1px;margin-left:4px;vertical-align:middle}
+.cbadge.today{background:rgba(56,212,138,.15);color:var(--up);border:1px solid rgba(56,212,138,.35)}
+.cbadge.week{background:rgba(229,184,74,.15);color:var(--warn);border:1px solid rgba(229,184,74,.35)}
+.imp-dot{color:var(--dn);margin-right:3px;font-size:9px}
+
+/* ALERTS */
+.al{padding:5px 7px;margin-bottom:4px;border-left:2px solid var(--warn);background:rgba(229,184,74,.04)}
+.al.bull{border-left-color:var(--up);background:rgba(56,212,138,.04)}
+.al.bear{border-left-color:var(--dn);background:rgba(239,87,87,.04)}
+.al-tag{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);margin-bottom:1px}
+.al.bull .al-tag{color:var(--up)}.al.bear .al-tag{color:var(--dn)}
+.al-txt{font-size:10px;color:var(--txt);line-height:1.35}
+
+/* FOOTER */
+#ftr{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--bdr);padding-top:4px}
+.fn{font-family:var(--mono);font-size:8px;color:var(--muted);letter-spacing:.04em}
+
+/* NO DATA STATE */
+.no-data{background:rgba(229,184,74,.08);border:1px solid rgba(229,184,74,.25);border-radius:2px;padding:12px 14px;margin:4px 0}
+.no-data-title{font-family:var(--mono);font-size:9px;color:var(--warn);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.no-data-body{font-size:11px;color:var(--txt);line-height:1.6}
+.no-data code{font-family:var(--mono);font-size:10px;color:var(--corn);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:2px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="hdr">
+    <div>
+      <div class="logo">&#x2B21; GRAINBRIEF</div>
+      <div class="tagline">CBOT &middot; MATIF &middot; Morning Overview &middot; Python-powered</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="rbtn" onclick="loadData()">&#8635; Refresh</button>
+      <div class="dot" id="dot"></div>
+      <div><div id="clock">--:--:--</div><div id="clockdate">---</div></div>
+    </div>
+  </div>
+
+  <div id="grid">
+    <div class="panel tall">
+      <div class="ph"><div class="ph-title"><b>&#9658;</b>Futures Prices + YTD</div><div class="ph-meta" id="pts">loading&hellip;</div></div>
+      <div class="pb" id="prices-body"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="ph-title"><b>&#9670;</b>14-Day Crop Weather</div><div class="ph-meta" id="wxts">Open-Meteo</div></div>
+      <div class="pb" id="wx-body"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="ph-title"><b>&#9679;</b>Market Intel Feed</div><div class="ph-meta" id="nts">RSS</div></div>
+      <div class="pb" id="intel-body"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="ph-title"><b>&#9651;</b>Trend Signals</div><div class="ph-meta">auto-computed</div></div>
+      <div class="pb" id="alerts-body"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="ph-title"><b>&#9633;</b>USDA + Economic Calendar</div><div class="ph-meta" id="calts">&mdash;</div></div>
+      <div class="pb" id="cal-body"></div>
+    </div>
+  </div>
+
+  <div id="ftr">
+    <div class="fn">Data: fetch_data.py (yfinance) &middot; Open-Meteo &middot; Google News RSS &middot; USDA.gov</div>
+    <div class="fn" id="lastref">&mdash;</div>
+  </div>
+</div>
+<script>
+/* ── CLOCK ── */
+function tick(){
+  const n=new Date();
+  document.getElementById('clock').textContent=n.toLocaleTimeString('en-GB');
+  document.getElementById('clockdate').textContent=n.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+}
+setInterval(tick,1000);tick();
+
+Chart.defaults.animation=false;
+const YC={};
+function setDot(s){document.getElementById('dot').className='dot '+(s||'');}
+function f(v,d=2){return(v==null||isNaN(v))?'—':Number(v).toFixed(d);}
+function cc(v){return v>0?'up':v<0?'dn':'fl';}
+function cs(v){return v>0?'+':'';}
+
+function sparkSVG(closes,color,w=155,h=16){
+  const v=closes.filter(x=>x!=null&&!isNaN(x));
+  if(v.length<3)return'';
+  const mn=Math.min(...v),mx=Math.max(...v),rng=mx-mn||1;
+  const pts=v.map((x,i)=>`${(i/(v.length-1))*w},${h-((x-mn)/rng)*(h-4)-2}`).join(' ');
+  const lp=pts.split(' ').pop().split(',');
+  return`<svg class="spk" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/><circle cx="${lp[0]}" cy="${lp[1]}" r="2.2" fill="${color}"/></svg>`;
+}
+
+function buildYTDChart(cid,dates,closes,color){
+  if(!dates||dates.length<5)return;
+  const canvas=document.getElementById(cid);if(!canvas)return;
+  if(YC[cid]){YC[cid].destroy();delete YC[cid];}
+  const pts=dates.map((d,i)=>({x:new Date(d),y:closes[i]}));
+  YC[cid]=new Chart(canvas,{
+    type:'line',
+    data:{datasets:[{data:pts,borderColor:color,borderWidth:1.6,pointRadius:0,fill:false,tension:0.15}]},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{enabled:false}},
+      scales:{
+        x:{type:'time',display:false},
+        y:{display:true,position:'right',ticks:{maxTicksLimit:3,font:{size:8,family:'IBM Plex Mono'},color:'#3a5870',callback:v=>Number(v).toFixed(0)},grid:{color:'rgba(255,255,255,.04)',drawBorder:false},border:{display:false}}
+      }
+    }
+  });
+}
+
+/* ── RENDER PRICES ── */
+function renderPrices(data){
+  const prices=data.prices||{};
+  const contracts=data.contracts||[];
+  const cbot=contracts.filter(c=>!c.label.includes('MATIF'));
+  const matif=contracts.filter(c=>c.label.includes('MATIF'));
+  const ytdSet=new Set(['ZC=F','ZW=F','KE=F','EBM=F','ECO=F']);
+
+  let html='';
+  const renderGroup=(name,items)=>{
+    html+=`<div class="grp-lbl">${name}</div>`;
+    for(const c of items){
+      const p=prices[c.sym];
+      const price=p?.price,chg=p?.change,pct=p?.pct;
+      const cv=chg!=null?cc(chg):'fl';
+      const spark=p?.ytd_closes?.length>3?sparkSVG(p.ytd_closes,c.col):'';
+      html+=`<div class="prow ${c.cls}">
+        <div><span class="pname">${c.label}</span><span class="punit">${c.unit}</span>${spark}</div>
+        <div class="pval ${cv}">${price!=null?f(price):'—'}</div>
+        <div class="pchg ${cv}">${chg!=null?cs(chg)+f(chg):'—'}<br>${pct!=null?cs(pct)+f(pct,2)+'%':''}</div>
+        <div class="phl">H:${p?.hi!=null?f(p.hi):'—'}<br>L:${p?.lo!=null?f(p.lo):'—'}</div>
+      </div>`;
+    }
+  };
+  renderGroup('CBOT — Chicago',cbot);
+  renderGroup('Euronext / MATIF — Paris',matif);
+
+  /* YTD charts */
+  const ytdContracts=contracts.filter(c=>ytdSet.has(c.sym)&&prices[c.sym]?.ytd_closes?.length>5);
+  if(ytdContracts.length){
+    html+=`<div class="ytd-wrap"><div class="ytd-lbl">YTD Price Charts</div><div class="ytd-grid">`;
+    for(const c of ytdContracts){
+      const cid='ytd_'+c.sym.replace(/[^a-z0-9]/gi,'_');
+      html+=`<div><div class="ytd-item-lbl">${c.label}</div><div class="ytd-ch"><canvas id="${cid}" role="img" aria-label="YTD chart ${c.label}"></canvas></div></div>`;
+    }
+    html+=`</div></div>`;
+  }
+
+  document.getElementById('prices-body').innerHTML=html;
+
+  for(const c of ytdContracts){
+    const p=prices[c.sym];
+    if(p?.ytd_dates&&p?.ytd_closes)
+      buildYTDChart('ytd_'+c.sym.replace(/[^a-z0-9]/gi,'_'),p.ytd_dates,p.ytd_closes,c.col);
+  }
+
+  /* Trend signals from price data */
+  renderAlerts(prices,contracts);
+
+  const fa=new Date(data.fetched_at);
+  document.getElementById('pts').textContent='yfinance · fetched '+fa.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+
+/* ── TREND SIGNALS ── */
+function renderAlerts(prices,contracts){
+  const alerts=[];
+  for(const c of contracts){
+    const p=prices[c.sym];if(!p)continue;
+    const cl=p.ytd_closes||[];
+    if(cl.length<6)continue;
+    const last=cl[cl.length-1],prev=cl[cl.length-2];
+    const p1d=((last-prev)/prev)*100;
+    const ma5=cl.slice(-5).reduce((a,b)=>a+b,0)/5;
+    const ma20=cl.slice(-Math.min(20,cl.length)).reduce((a,b)=>a+b,0)/Math.min(20,cl.length);
+    const sl30=cl.slice(-30),h30=Math.max(...sl30),l30=Math.min(...sl30);
+    const pos=((last-l30)/(h30-l30||1))*100;
+    if(Math.abs(p1d)>=1.8)alerts.push({t:p1d>0?'bull':'bear',tag:p1d>0?'▲ Big day up':'▼ Big day down',txt:`${c.label}: ${cs(p1d)+f(p1d,2)}% session move.`});
+    if(cl.length>=15){
+      if(ma5>ma20*1.004)alerts.push({t:'bull',tag:'× MA cross up',  txt:`${c.label}: 5d MA above 20d MA.`});
+      else if(ma5<ma20*0.996)alerts.push({t:'bear',tag:'× MA cross down',txt:`${c.label}: 5d MA below 20d MA.`});
+    }
+    if(pos>=88)alerts.push({t:'bull',tag:'◈ Near 30d high',txt:`${c.label} at ${f(pos,0)}th pct of range.`});
+    if(pos<=12) alerts.push({t:'bear',tag:'◈ Near 30d low', txt:`${c.label} at ${f(pos,0)}th pct of range.`});
+    if(p.change!=null)alerts.push({t:p.change>=0?'bull':'bear',tag:p.change>=0?'▲ Session':'▼ Session',txt:`${c.label}: ${p.price!=null?f(p.price):'?'} ${c.unit} · ${cs(p.change)+f(p.change)} (${cs(p.pct)+f(p.pct,2)}%)`});
+  }
+  if(!alerts.length){
+    document.getElementById('alerts-body').innerHTML='<div style="font-size:10px;color:var(--dim);padding:6px 0">No significant signals — markets stable.</div>';
+    return;
+  }
+  document.getElementById('alerts-body').innerHTML=alerts.slice(0,8).map(a=>`<div class="al ${a.t}"><div class="al-tag">${a.tag}</div><div class="al-txt">${a.txt}</div></div>`).join('');
+}
+
+/* ── RENDER WEATHER ── */
+const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function tempCol(t,norm){
+  const d=t-norm;
+  if(d>=5)return'#f05c5c';if(d>=3)return'#e87050';if(d>=1.5)return'#d4a020';
+  if(d<=-5)return'#4a8ed0';if(d<=-3)return'#6aaee0';if(d<=-1.5)return'#8ac0e8';
+  return'#bfd4e4';
+}
+function renderWeather(weather){
+  if(!weather||!weather.length){
+    document.getElementById('wx-body').innerHTML='<div style="color:var(--dn);font-size:10px;padding:8px 0">Weather data missing — run fetch_data.py</div>';return;
+  }
+  let html='<div class="wx-grid">';
+  for(const loc of weather){
+    const curCol=tempCol(loc.current_temp??0,loc.norm??10);
+    html+=`<div class="wx-card">
+      <div class="wx-region">${loc.name}</div>
+      <div class="wx-now"><span class="wx-temp" style="color:${curCol}">${f(loc.current_temp,0)}°C</span><span class="wx-desc">${loc.current_desc}</span></div>
+      <div class="fc-strip">`;
+    for(const day of (loc.forecast||[])){
+      const dn=DAYS[new Date(day.date).getDay()];
+      const hc=day.hi!=null?tempCol(day.hi,day.norm+3):'#bfd4e4';
+      const lc=day.lo!=null?tempCol(day.lo,day.norm-3):'#bfd4e4';
+      html+=`<div class="fc-day">
+        <div class="fc-dn">${dn}</div>
+        <div class="fc-hi" style="color:${hc}">${day.hi!=null?f(day.hi,0)+'°':'—'}</div>
+        <div class="fc-lo" style="color:${lc}">${day.lo!=null?f(day.lo,0)+'°':'—'}</div>
+        ${day.precip>0.5?`<div class="fc-pr">${f(day.precip,0)}mm</div>`:''}
+      </div>`;
+    }
+    html+=`</div></div>`;
+  }
+  html+='</div>';
+  document.getElementById('wx-body').innerHTML=html;
+  document.getElementById('wxts').textContent='Open-Meteo 14d';
+}
+
+/* ── INTEL FEED (RSS, loaded live) ── */
+const FEEDS=[
+  {url:'https://news.google.com/rss/search?q=corn+wheat+CBOT+grain+futures&hl=en&gl=US&ceid=US:en',src:'CBOT/Grain',col:'#4d9bdc'},
+  {url:'https://news.google.com/rss/search?q=SovEcon+OR+"Peak+Trading"+OR+Kobeissi+grain+commodity&hl=en&gl=US&ceid=US:en',src:'Analysts',col:'#e5b84a'},
+  {url:'https://news.google.com/rss/search?q=USDA+WASDE+grain+corn+wheat&hl=en&gl=US&ceid=US:en',src:'USDA',col:'#38d48a'},
+  {url:'https://news.google.com/rss/search?q=MATIF+euronext+wheat+corn&hl=en&gl=US&ceid=US:en',src:'MATIF/EU',col:'#c79f44'},
+  {url:'https://www.farmprogress.com/rss/all',src:'Farm Progress',col:'#a78bfa'},
+];
+function timeAgo(ds){
+  if(!ds)return'';const s=(Date.now()-new Date(ds))/1000;
+  if(s<3600)return Math.round(s/60)+'m ago';
+  if(s<86400)return Math.round(s/3600)+'h ago';
+  return Math.round(s/86400)+'d ago';
+}
+async function loadIntel(){
+  const items=[];
+  await Promise.allSettled(FEEDS.map(async fd=>{
+    try{
+      const px=`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(fd.url)}&count=5`;
+      const r=await fetch(px,{signal:AbortSignal.timeout(9000)});
+      const d=await r.json();
+      if(d.items)d.items.forEach(it=>items.push({src:fd.src,col:fd.col,title:it.title,date:it.pubDate||it.isoDate}));
+    }catch(e){}
+  }));
+  if(!items.length){
+    document.getElementById('intel-body').innerHTML='<div style="font-size:10px;color:var(--dim);padding:6px 0">RSS unavailable. Open grainbrief.html via a local server or Vercel for full feed access.</div>';
+    return;
+  }
+  items.sort((a,b)=>new Date(b.date)-new Date(a.date));
+  document.getElementById('intel-body').innerHTML=items.slice(0,9).map(it=>`
+    <div class="intel-item">
+      <div class="intel-src" style="color:${it.col}">${it.src}</div>
+      <div class="intel-title">${(it.title||'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').substring(0,94)}${(it.title||'').length>94?'…':''}</div>
+      <div class="intel-time">${timeAgo(it.date)}</div>
+    </div>`).join('');
+  document.getElementById('nts').textContent=items.length+' items · '+new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+
+/* ── CALENDAR ── */
+function getWeekWindow(){
+  const now=new Date(),dow=now.getDay(),isWE=dow===0||dow===6;
+  let wStart=new Date(now);
+  if(isWE){wStart.setDate(now.getDate()+(dow===6?2:1));}
+  else{wStart.setDate(now.getDate()-(dow===1?0:dow-1));}
+  wStart.setHours(0,0,0,0);
+  const wEnd=new Date(wStart);wEnd.setDate(wStart.getDate()+4);wEnd.setHours(23,59,59,999);
+  return{now,wStart,wEnd};
+}
+function nextWeekday(td,from){
+  const d=new Date(from),curr=d.getDay()||7;
+  let diff=td-curr;if(diff<0)diff+=7;if(diff===0&&d.getHours()>15)diff=7;
+  d.setDate(d.getDate()+diff);d.setHours(0,0,0,0);return d;
+}
+function loadCalendar(){
+  const{now,wStart,wEnd}=getWeekWindow();
+  const yr=now.getFullYear();
+  const calRowCls=d=>{if(!d||isNaN(d))return'';if(d.toDateString()===now.toDateString())return' today';if(d>=wStart&&d<=wEnd)return' this-week';return'';};
+  const calBadge=d=>{if(!d||isNaN(d))return'';if(d.toDateString()===now.toDateString())return'<span class="cbadge today">TODAY</span>';const days=Math.round((d-now)/86400000);if(d>=wStart&&d<=wEnd)return`<span class="cbadge week">${days<=0?'TODAY':days+'d'}</span>`;return'';};
+  const fmtD=d=>(!d||isNaN(d))?'—':d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  const USDA=[
+    {n:'WASDE + Crop Production',d:new Date(yr,6,11),f:'Monthly'},
+    {n:'Export Inspections',     d:nextWeekday(1,now),f:'Weekly · Mon'},
+    {n:'Crop Progress Report',   d:nextWeekday(1,now),f:'Weekly · Mon'},
+    {n:'Export Sales Report',    d:nextWeekday(4,now),f:'Weekly · Thu'},
+    {n:'Grain Stocks',           d:new Date(yr,8,30), f:'Quarterly'},
+    {n:'World Ag Supply & Demand',d:new Date(yr,7,12),f:'Monthly'},
+  ];
+  const ECO=[
+    {n:'US CPI',                d:new Date(yr,6,11), f:'Monthly',  imp:true},
+    {n:'US Non-Farm Payrolls',  d:new Date(yr,6,4),  f:'Monthly',  imp:true},
+    {n:'Fed Rate Decision',     d:new Date(yr,6,30), f:'6-weekly', imp:true},
+    {n:'Brazil CONAB Crop',     d:new Date(yr,6,9),  f:'Monthly',  imp:true},
+    {n:'EU MARS Crop Bulletin', d:new Date(yr,6,15), f:'Monthly',  imp:true},
+    {n:'China Trade Data',      d:new Date(yr,6,14), f:'Monthly',  imp:true},
+    {n:'EIA Oil/Ethanol',       d:nextWeekday(3,now),f:'Weekly · Wed',imp:false},
+    {n:'USD Index (DXY)',       d:nextWeekday(5,now),f:'Weekly · Fri',imp:false},
+  ];
+  const rows=(items,showImp)=>items.map(r=>`<div class="cal-row${calRowCls(r.d)}"><div class="cal-name">${showImp&&r.imp?'<span class="imp-dot">●</span>':''}${r.n}${calBadge(r.d)}</div><div class="cal-freq">${r.f}</div><div class="cal-date">${fmtD(r.d)}</div></div>`).join('');
+  const wl=wStart.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' – '+wEnd.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+  document.getElementById('cal-body').innerHTML=`<div class="cal-section"><div class="cal-hdr">USDA Reports</div>${rows(USDA,false)}</div><div class="cal-section"><div class="cal-hdr">Economic Releases &nbsp;<span class="imp-dot">●</span> high impact</div>${rows(ECO,true)}</div>`;
+  document.getElementById('calts').textContent='Week: '+wl;
+}
+
+/* ── MAIN LOAD ── */
+async function loadData(){
+  setDot('stale');
+  try{
+    const r=await fetch('data.json?t='+Date.now());
+    if(!r.ok)throw new Error('data.json not found');
+    const data=await r.json();
+    renderPrices(data);
+    renderWeather(data.weather);
+    const fa=new Date(data.fetched_at);
+    const minsAgo=Math.round((Date.now()-fa)/60000);
+    document.getElementById('lastref').textContent=`data.json: ${minsAgo}m ago (${fa.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})})`;
+    setDot('');
+  }catch(e){
+    setDot('error');
+    /* Show setup instructions */
+    document.getElementById('prices-body').innerHTML=`
+      <div class="no-data">
+        <div class="no-data-title">&#9888; Run the Python fetcher first</div>
+        <div class="no-data-body">
+          1. Install: <code>pip install yfinance requests</code><br>
+          2. Run: <code>python fetch_data.py</code><br>
+          3. This creates <code>data.json</code> next to this HTML file<br>
+          4. Serve locally: <code>python -m http.server 8080</code><br>
+          5. Open: <code>http://localhost:8080/grainbrief.html</code><br><br>
+          For auto-refresh every 10 min: <code>python fetch_data.py --loop</code><br>
+          For 6am auto-start: add to Windows Task Scheduler or Mac/Linux cron
+        </div>
+      </div>`;
+    document.getElementById('lastref').textContent='No data.json found';
+  }
+  /* RSS news always loads live regardless */
+  await loadIntel();
+  loadCalendar();
+}
+
+/* Auto-reload data.json every 5 minutes */
+setInterval(loadData,5*60*1000);
+loadData();
+</script>
+</body>
+</html>
