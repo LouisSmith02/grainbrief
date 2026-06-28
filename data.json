@@ -1,9 +1,9 @@
 {
-  "fetched_at": "2026-06-28T21:36:29.006537",
+  "fetched_at": "2026-06-28T21:49:00.988049",
   "contracts": [
     {
       "sym": "ZCN26.CBT",
-      "label": "Corn Jul 26",
+      "label": "Corn  Jul 26",
       "unit": "USc/bu",
       "cls": "corn",
       "col": "#d3c149",
@@ -11,7 +11,7 @@
     },
     {
       "sym": "ZCZ26.CBT",
-      "label": "Corn Dec 26",
+      "label": "Corn  Dec 26",
       "unit": "USc/bu",
       "cls": "corn",
       "col": "#d3c149",
@@ -19,7 +19,7 @@
     },
     {
       "sym": "ZCH27.CBT",
-      "label": "Corn Mar 27",
+      "label": "Corn  Mar 27",
       "unit": "USc/bu",
       "cls": "corn",
       "col": "#d3c149",
@@ -27,7 +27,7 @@
     },
     {
       "sym": "ZCK27.CBT",
-      "label": "Corn May 27",
+      "label": "Corn  May 27",
       "unit": "USc/bu",
       "cls": "corn",
       "col": "#d3c149",
@@ -35,7 +35,7 @@
     },
     {
       "sym": "ZCN27.CBT",
-      "label": "Corn Jul 27",
+      "label": "Corn  Jul 27",
       "unit": "USc/bu",
       "cls": "corn",
       "col": "#d3c149",
@@ -47,7 +47,7 @@
       "unit": "USc/bu",
       "cls": "wheat",
       "col": "#c79f44",
-      "group": "CBOT Wheat"
+      "group": "CBOT Wheat SRW"
     },
     {
       "sym": "ZWU26.CBT",
@@ -55,7 +55,7 @@
       "unit": "USc/bu",
       "cls": "wheat",
       "col": "#c79f44",
-      "group": "CBOT Wheat"
+      "group": "CBOT Wheat SRW"
     },
     {
       "sym": "ZWZ26.CBT",
@@ -63,7 +63,7 @@
       "unit": "USc/bu",
       "cls": "wheat",
       "col": "#c79f44",
-      "group": "CBOT Wheat"
+      "group": "CBOT Wheat SRW"
     },
     {
       "sym": "ZWH27.CBT",
@@ -71,7 +71,7 @@
       "unit": "USc/bu",
       "cls": "wheat",
       "col": "#c79f44",
-      "group": "CBOT Wheat"
+      "group": "CBOT Wheat SRW"
     },
     {
       "sym": "ZWK27.CBT",
@@ -79,23 +79,25 @@
       "unit": "USc/bu",
       "cls": "wheat",
       "col": "#c79f44",
-      "group": "CBOT Wheat"
+      "group": "CBOT Wheat SRW"
     },
     {
-      "sym": "EBM=F",
-      "label": "MATIF Wheat",
+      "sym": "MATIF_W",
+      "label": "Mill. Wheat",
       "unit": "\u20ac/t",
       "cls": "wheat",
       "col": "#e8b84b",
-      "group": "MATIF Wheat"
+      "group": "MATIF (euronext.com)",
+      "manual": true
     },
     {
-      "sym": "ECO=F",
-      "label": "MATIF Corn",
+      "sym": "MATIF_C",
+      "label": "Corn",
       "unit": "\u20ac/t",
       "cls": "corn",
       "col": "#b8d44a",
-      "group": "MATIF Corn"
+      "group": "MATIF (euronext.com)",
+      "manual": true
     }
   ],
   "prices": {
@@ -686,30 +688,16 @@
       "pct": -0.7075,
       "ytd_closes": [],
       "ytd_dates": []
-    },
-    "EBM=F": {
-      "price": 52675.0,
-      "prev": 52630.0,
-      "hi": 53330.0,
-      "lo": 51795.0,
-      "change": 45.0,
-      "pct": 0.0855,
-      "ytd_closes": [
-        52675.0
-      ],
-      "ytd_dates": [
-        "2026-06-26"
-      ]
-    },
-    "ECO=F": null
+    }
   },
   "weather": [
     {
       "name": "Iowa \u00b7 Corn Belt",
       "key": "iowa",
-      "current_temp": 29.7,
+      "current_temp": 31.0,
       "current_code": 95,
       "current_desc": "T-storm",
+      "current_wind": 27.2,
       "norm": 21,
       "forecast": [
         {
@@ -717,7 +705,10 @@
           "hi": 32.2,
           "lo": 22.0,
           "precip": 0.1,
+          "precip_prob": 23,
+          "wind_max": 33.0,
           "code": 95,
+          "desc": "T-storm",
           "norm": 21
         },
         {
@@ -725,7 +716,10 @@
           "hi": 34.0,
           "lo": 23.0,
           "precip": 0.0,
+          "precip_prob": 12,
+          "wind_max": 36.4,
           "code": 96,
+          "desc": "",
           "norm": 21
         },
         {
@@ -733,7 +727,10 @@
           "hi": 32.9,
           "lo": 23.8,
           "precip": 0.0,
+          "precip_prob": 20,
+          "wind_max": 27.0,
           "code": 95,
+          "desc": "T-storm",
           "norm": 21
         },
         {
@@ -741,7 +738,10 @@
           "hi": 33.1,
           "lo": 22.9,
           "precip": 0.0,
+          "precip_prob": 23,
+          "wind_max": 29.7,
           "code": 96,
+          "desc": "",
           "norm": 24
         },
         {
@@ -749,7 +749,10 @@
           "hi": 32.8,
           "lo": 23.3,
           "precip": 0.0,
+          "precip_prob": 42,
+          "wind_max": 26.3,
           "code": 95,
+          "desc": "T-storm",
           "norm": 24
         },
         {
@@ -757,7 +760,10 @@
           "hi": 34.4,
           "lo": 24.4,
           "precip": 0.0,
+          "precip_prob": 38,
+          "wind_max": 26.1,
           "code": 95,
+          "desc": "T-storm",
           "norm": 24
         },
         {
@@ -765,7 +771,10 @@
           "hi": 34.8,
           "lo": 24.5,
           "precip": 0.0,
+          "precip_prob": 24,
+          "wind_max": 28.0,
           "code": 95,
+          "desc": "T-storm",
           "norm": 24
         },
         {
@@ -773,7 +782,10 @@
           "hi": 28.3,
           "lo": 20.4,
           "precip": 6.3,
+          "precip_prob": 30,
+          "wind_max": 19.5,
           "code": 80,
+          "desc": "Showers",
           "norm": 24
         },
         {
@@ -781,7 +793,10 @@
           "hi": 28.8,
           "lo": 18.7,
           "precip": 0.0,
+          "precip_prob": 13,
+          "wind_max": 11.9,
           "code": 3,
+          "desc": "Overcast",
           "norm": 24
         },
         {
@@ -789,7 +804,10 @@
           "hi": 30.4,
           "lo": 19.6,
           "precip": 0.0,
+          "precip_prob": 13,
+          "wind_max": 13.5,
           "code": 3,
+          "desc": "Overcast",
           "norm": 24
         },
         {
@@ -797,7 +815,10 @@
           "hi": 30.4,
           "lo": 20.1,
           "precip": 0.0,
+          "precip_prob": 10,
+          "wind_max": 18.5,
           "code": 3,
+          "desc": "Overcast",
           "norm": 24
         },
         {
@@ -805,7 +826,10 @@
           "hi": 30.6,
           "lo": 19.3,
           "precip": 0.9,
+          "precip_prob": 13,
+          "wind_max": 15.6,
           "code": 95,
+          "desc": "T-storm",
           "norm": 24
         },
         {
@@ -813,7 +837,10 @@
           "hi": 28.1,
           "lo": 16.0,
           "precip": 0.0,
+          "precip_prob": 23,
+          "wind_max": 12.3,
           "code": 3,
+          "desc": "Overcast",
           "norm": 24
         },
         {
@@ -821,7 +848,10 @@
           "hi": 28.2,
           "lo": 16.5,
           "precip": 0.0,
+          "precip_prob": 26,
+          "wind_max": 11.2,
           "code": 0,
+          "desc": "Clear",
           "norm": 24
         }
       ]
@@ -829,9 +859,10 @@
     {
       "name": "Kansas \u00b7 Wheat Belt",
       "key": "kansas",
-      "current_temp": 37.6,
+      "current_temp": 37.8,
       "current_code": 95,
       "current_desc": "T-storm",
+      "current_wind": 38.9,
       "norm": 25,
       "forecast": [
         {
@@ -839,15 +870,21 @@
           "hi": 37.8,
           "lo": 26.5,
           "precip": 0.0,
+          "precip_prob": 1,
+          "wind_max": 40.9,
           "code": 95,
+          "desc": "T-storm",
           "norm": 25
         },
         {
           "date": "2026-06-29",
           "hi": 37.9,
-          "lo": 25.1,
+          "lo": 25.0,
           "precip": 0.0,
+          "precip_prob": 4,
+          "wind_max": 38.5,
           "code": 95,
+          "desc": "T-storm",
           "norm": 25
         },
         {
@@ -855,7 +892,10 @@
           "hi": 35.7,
           "lo": 25.4,
           "precip": 0.0,
+          "precip_prob": 15,
+          "wind_max": 38.6,
           "code": 95,
+          "desc": "T-storm",
           "norm": 25
         },
         {
@@ -863,7 +903,10 @@
           "hi": 35.2,
           "lo": 24.6,
           "precip": 0.8,
+          "precip_prob": 22,
+          "wind_max": 40.6,
           "code": 53,
+          "desc": "Drizzle",
           "norm": 29
         },
         {
@@ -871,7 +914,10 @@
           "hi": 37.3,
           "lo": 22.4,
           "precip": 1.9,
+          "precip_prob": 22,
+          "wind_max": 39.7,
           "code": 95,
+          "desc": "T-storm",
           "norm": 29
         },
         {
@@ -879,7 +925,10 @@
           "hi": 38.9,
           "lo": 25.4,
           "precip": 0.0,
+          "precip_prob": 5,
+          "wind_max": 36.0,
           "code": 3,
+          "desc": "Overcast",
           "norm": 29
         },
         {
@@ -887,7 +936,10 @@
           "hi": 39.7,
           "lo": 26.0,
           "precip": 0.0,
+          "precip_prob": 16,
+          "wind_max": 33.9,
           "code": 95,
+          "desc": "T-storm",
           "norm": 29
         },
         {
@@ -895,7 +947,10 @@
           "hi": 31.2,
           "lo": 21.6,
           "precip": 1.2,
+          "precip_prob": 16,
+          "wind_max": 29.7,
           "code": 51,
+          "desc": "Lt drizzle",
           "norm": 29
         },
         {
@@ -903,7 +958,10 @@
           "hi": 33.6,
           "lo": 20.0,
           "precip": 0.0,
+          "precip_prob": 7,
+          "wind_max": 10.9,
           "code": 0,
+          "desc": "Clear",
           "norm": 29
         },
         {
@@ -911,7 +969,10 @@
           "hi": 35.9,
           "lo": 21.6,
           "precip": 0.0,
+          "precip_prob": 7,
+          "wind_max": 24.2,
           "code": 95,
+          "desc": "T-storm",
           "norm": 29
         },
         {
@@ -919,7 +980,10 @@
           "hi": 39.9,
           "lo": 24.2,
           "precip": 0.0,
+          "precip_prob": 7,
+          "wind_max": 28.1,
           "code": 3,
+          "desc": "Overcast",
           "norm": 29
         },
         {
@@ -927,7 +991,10 @@
           "hi": 38.4,
           "lo": 23.7,
           "precip": 0.3,
+          "precip_prob": 12,
+          "wind_max": 24.1,
           "code": 51,
+          "desc": "Lt drizzle",
           "norm": 29
         },
         {
@@ -935,7 +1002,10 @@
           "hi": 33.3,
           "lo": 22.3,
           "precip": 1.5,
+          "precip_prob": 24,
+          "wind_max": 21.3,
           "code": 95,
+          "desc": "T-storm",
           "norm": 29
         },
         {
@@ -943,7 +1013,10 @@
           "hi": 33.6,
           "lo": 21.4,
           "precip": 0.0,
+          "precip_prob": 23,
+          "wind_max": 20.7,
           "code": 95,
+          "desc": "T-storm",
           "norm": 29
         }
       ]
@@ -951,9 +1024,10 @@
     {
       "name": "\u00cele-de-France",
       "key": "paris",
-      "current_temp": 23.9,
+      "current_temp": 23.7,
       "current_code": 3,
       "current_desc": "Overcast",
+      "current_wind": 10.1,
       "norm": 18,
       "forecast": [
         {
@@ -961,7 +1035,10 @@
           "hi": 30.7,
           "lo": 17.2,
           "precip": 2.7,
+          "precip_prob": 38,
+          "wind_max": 17.6,
           "code": 80,
+          "desc": "Showers",
           "norm": 18
         },
         {
@@ -969,7 +1046,10 @@
           "hi": 28.2,
           "lo": 17.2,
           "precip": 0.0,
+          "precip_prob": 15,
+          "wind_max": 12.2,
           "code": 3,
+          "desc": "Overcast",
           "norm": 18
         },
         {
@@ -977,7 +1057,10 @@
           "hi": 30.7,
           "lo": 14.8,
           "precip": 0.0,
+          "precip_prob": 3,
+          "wind_max": 11.8,
           "code": 3,
+          "desc": "Overcast",
           "norm": 18
         },
         {
@@ -985,7 +1068,10 @@
           "hi": 26.1,
           "lo": 16.3,
           "precip": 0.0,
+          "precip_prob": 5,
+          "wind_max": 16.9,
           "code": 3,
+          "desc": "Overcast",
           "norm": 21
         },
         {
@@ -993,7 +1079,10 @@
           "hi": 28.9,
           "lo": 13.6,
           "precip": 0.0,
+          "precip_prob": 0,
+          "wind_max": 15.1,
           "code": 3,
+          "desc": "Overcast",
           "norm": 21
         },
         {
@@ -1001,7 +1090,10 @@
           "hi": 27.1,
           "lo": 17.8,
           "precip": 0.0,
+          "precip_prob": 0,
+          "wind_max": 15.5,
           "code": 3,
+          "desc": "Overcast",
           "norm": 21
         },
         {
@@ -1009,7 +1101,10 @@
           "hi": 28.4,
           "lo": 12.5,
           "precip": 0.0,
+          "precip_prob": 0,
+          "wind_max": 9.7,
           "code": 0,
+          "desc": "Clear",
           "norm": 21
         },
         {
@@ -1017,7 +1112,10 @@
           "hi": 32.1,
           "lo": 14.7,
           "precip": 0.0,
+          "precip_prob": 0,
+          "wind_max": 11.4,
           "code": 2,
+          "desc": "Partly cloudy",
           "norm": 21
         },
         {
@@ -1025,7 +1123,10 @@
           "hi": 33.3,
           "lo": 20.3,
           "precip": 0.0,
+          "precip_prob": 0,
+          "wind_max": 12.5,
           "code": 3,
+          "desc": "Overcast",
           "norm": 21
         },
         {
@@ -1033,7 +1134,10 @@
           "hi": 36.6,
           "lo": 22.2,
           "precip": 0.0,
+          "precip_prob": 2,
+          "wind_max": 8.8,
           "code": 1,
+          "desc": "Mainly clear",
           "norm": 21
         },
         {
@@ -1041,7 +1145,10 @@
           "hi": 38.2,
           "lo": 23.8,
           "precip": 0.0,
+          "precip_prob": 1,
+          "wind_max": 8.7,
           "code": 3,
+          "desc": "Overcast",
           "norm": 21
         },
         {
@@ -1049,7 +1156,10 @@
           "hi": 39.4,
           "lo": 24.4,
           "precip": 0.0,
+          "precip_prob": 4,
+          "wind_max": 9.4,
           "code": 2,
+          "desc": "Partly cloudy",
           "norm": 21
         },
         {
@@ -1057,7 +1167,10 @@
           "hi": 35.4,
           "lo": 25.8,
           "precip": 0.0,
+          "precip_prob": 8,
+          "wind_max": 14.8,
           "code": 2,
+          "desc": "Partly cloudy",
           "norm": 21
         },
         {
@@ -1065,7 +1178,10 @@
           "hi": 37.1,
           "lo": 23.8,
           "precip": 0.0,
+          "precip_prob": 10,
+          "wind_max": 15.0,
           "code": 3,
+          "desc": "Overcast",
           "norm": 21
         }
       ]
@@ -1073,9 +1189,10 @@
     {
       "name": "Odessa \u00b7 Black Sea",
       "key": "odessa",
-      "current_temp": 27.8,
+      "current_temp": 27.6,
       "current_code": 0,
       "current_desc": "Clear",
+      "current_wind": 3.6,
       "norm": 22,
       "forecast": [
         {
@@ -1083,7 +1200,10 @@
           "hi": 34.3,
           "lo": 21.7,
           "precip": 0.0,
+          "precip_prob": 5,
+          "wind_max": 13.0,
           "code": 2,
+          "desc": "Partly cloudy",
           "norm": 22
         },
         {
@@ -1091,7 +1211,10 @@
           "hi": 32.4,
           "lo": 24.2,
           "precip": 0.0,
+          "precip_prob": 0,
+          "wind_max": 7.9,
           "code": 3,
+          "desc": "Overcast",
           "norm": 22
         },
         {
@@ -1099,7 +1222,10 @@
           "hi": 36.9,
           "lo": 24.0,
           "precip": 0.6,
+          "precip_prob": 10,
+          "wind_max": 9.1,
           "code": 80,
+          "desc": "Showers",
           "norm": 22
         },
         {
@@ -1107,7 +1233,10 @@
           "hi": 32.1,
           "lo": 24.5,
           "precip": 0.0,
+          "precip_prob": 0,
+          "wind_max": 12.3,
           "code": 2,
+          "desc": "Partly cloudy",
           "norm": 24
         },
         {
@@ -1115,7 +1244,10 @@
           "hi": 30.2,
           "lo": 23.4,
           "precip": 0.0,
+          "precip_prob": 0,
+          "wind_max": 10.5,
           "code": 2,
+          "desc": "Partly cloudy",
           "norm": 24
         },
         {
@@ -1123,7 +1255,10 @@
           "hi": 33.0,
           "lo": 21.9,
           "precip": 0.0,
+          "precip_prob": 7,
+          "wind_max": 10.5,
           "code": 3,
+          "desc": "Overcast",
           "norm": 24
         },
         {
@@ -1131,7 +1266,10 @@
           "hi": 24.3,
           "lo": 17.4,
           "precip": 6.1,
+          "precip_prob": 15,
+          "wind_max": 22.3,
           "code": 80,
+          "desc": "Showers",
           "norm": 24
         },
         {
@@ -1139,7 +1277,10 @@
           "hi": 24.4,
           "lo": 16.6,
           "precip": 2.6,
+          "precip_prob": 10,
+          "wind_max": 21.3,
           "code": 61,
+          "desc": "Lt rain",
           "norm": 24
         },
         {
@@ -1147,7 +1288,10 @@
           "hi": 24.9,
           "lo": 16.9,
           "precip": 0.6,
+          "precip_prob": 22,
+          "wind_max": 21.2,
           "code": 51,
+          "desc": "Lt drizzle",
           "norm": 24
         },
         {
@@ -1155,7 +1299,10 @@
           "hi": 25.9,
           "lo": 17.9,
           "precip": 0.0,
+          "precip_prob": 22,
+          "wind_max": 18.1,
           "code": 1,
+          "desc": "Mainly clear",
           "norm": 24
         },
         {
@@ -1163,7 +1310,10 @@
           "hi": 30.0,
           "lo": 19.1,
           "precip": 0.0,
+          "precip_prob": 16,
+          "wind_max": 10.7,
           "code": 3,
+          "desc": "Overcast",
           "norm": 24
         },
         {
@@ -1171,7 +1321,10 @@
           "hi": 29.8,
           "lo": 22.6,
           "precip": 0.0,
+          "precip_prob": 27,
+          "wind_max": 14.3,
           "code": 3,
+          "desc": "Overcast",
           "norm": 24
         },
         {
@@ -1179,7 +1332,10 @@
           "hi": 28.7,
           "lo": 21.0,
           "precip": 0.0,
+          "precip_prob": 18,
+          "wind_max": 11.9,
           "code": 2,
+          "desc": "Partly cloudy",
           "norm": 24
         },
         {
@@ -1187,7 +1343,10 @@
           "hi": 28.3,
           "lo": 21.5,
           "precip": 0.0,
+          "precip_prob": 11,
+          "wind_max": 11.1,
           "code": 0,
+          "desc": "Clear",
           "norm": 24
         }
       ]
